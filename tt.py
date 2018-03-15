@@ -61,10 +61,36 @@ def create(ballCount, ballsSubdivisions, ballsSize, horizontalSpaceSize, vertica
         tLocation = Vector((random.uniform(-horizontalSpaceSize/2, horizontalSpaceSize/2), random.uniform(-horizontalSpaceSize/2, horizontalSpaceSize/2), random.uniform(0, verticalSpaceSize)))
         points.append(tLocation)
         bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=ballsSubdivisions, size=ballsSize, view_align=False, enter_editmode=False, location=tLocation, layers=(True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False))
+        ob = bpy.context.active_object
+        ob.data.materials.append(whiteMat)
 
     for point in points:
         for pointt in points:
             if random.uniform(0,1) < connectionRate:
                 connect(pointt, point, connectionRadius, connectionSteps)
+                ob = bpy.context.active_object
+                ob.data.materials.append(blackMat)
 
-create(20, 3, 1, 30, 10, .1, 12, 2);
+
+
+
+
+mat_name = "ttblack"
+blackMat = (bpy.data.materials.get(mat_name) or
+       bpy.data.materials.new(mat_name))
+blackMat.use_nodes = True
+nodes = blackMat.node_tree.nodes
+nodes["Diffuse BSDF"].inputs[0].default_value = (0.19, 0.19, 0.19, 1) #color
+nodes["Diffuse BSDF"].inputs[1].default_value = 0.15 #roughness
+
+mat_name = "ttwhite"
+whiteMat = (bpy.data.materials.get(mat_name) or
+       bpy.data.materials.new(mat_name))
+whiteMat.use_nodes = True
+nodes = whiteMat.node_tree.nodes
+nodes["Diffuse BSDF"].inputs[0].default_value = (1, 1, 1, 1) #color
+nodes["Diffuse BSDF"].inputs[1].default_value = 0.15 #roughness
+
+
+
+create(50, 3, .3, 30, 60, .03, 8, .05);
